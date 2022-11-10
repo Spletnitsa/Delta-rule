@@ -8,7 +8,7 @@
         private double W1 = 0;
         private double W2 = 0;
         private double T = 0;
-        private double E;
+        private double E = 0;
         private double NetRes;
         private int Y;
         public int N = 1;
@@ -28,22 +28,33 @@
                 return 0;
         }
 
-        public double LearningNeuron(int X1, int X2, int D)
+        public void LearningNeuron(int[] X1, int[] X2, int[] D)
         {
-            this.X1 = X1;
-            this.X2 = X2;
-            Net();
-            Y = ActivateFunction();
-            E = D - Y;
+            int j = 0;
 
-            W1 += N * E * this.X1;
-            W2 += N * E * this.X2;
-            T += N * E * X0;
+            Console.WriteLine("Начато обучение\n");
+            do
+            {
+                j++;
+                Console.WriteLine($"Прогон {j}");
+                for (int i = 0; i < D.Length; i++)
+                {
+                    this.X1 = X1[i];
+                    this.X2 = X2[i];
+                    Net();
+                    Y = ActivateFunction();
+                    E = D[i] - Y;
 
-            Console.WriteLine($"Net = {NetRes} Выход = {Y} Эталонное значение = {D}");
-            Console.WriteLine($"Изменение весов:\n W1 = {W1}\n W2 = {W2}\n T = {T}\n E = {E}\n");
+                    W1 += N * E * this.X1;
+                    W2 += N * E * this.X2;
+                    T += N * E * X0;
 
-            return E;
+                    Console.WriteLine($"Net = {NetRes} Выход = {Y} Эталонное значение = {D[i]}");
+                    Console.WriteLine($"Изменение весов:\n W1 = {W1}\n W2 = {W2}\n T = {T}\n E = {E}\n");
+                }
+            } while (E > 0 || E < 0);
+
+            Console.WriteLine("Обучение завершено!\n");
         }
 
         public void SolutionOfProblem (int X1, int X2)
@@ -53,7 +64,7 @@
             Net();
             Y = ActivateFunction();
 
-            Console.WriteLine($"X1 = {X1}\tX2 = {X2}\tВыход = {Y}\n");
+            Console.WriteLine($"X1 = {this.X1}\tX2 = {this.X2}\tВыход = {Y}\n");
         }
     }
     internal class Program
@@ -62,27 +73,16 @@
         {
             int[] input1 = new int[] { 1, 1, -1, -1 };
             int[] input2 = new int[] { 1, -1, 1, -1 };
-            int[] D = new int[] { 1, 1, 1, -1 };
-            neuron firstNeuron = new neuron();
-            double e = 0;
-            int j = 0;
+            int[] D = new int[] { 1, -1, -1, -1 };
+            neuron universalNeuron = new neuron();
 
-            Console.WriteLine("Обучение\n");
-            do
-            {
-                j++;
-                Console.WriteLine($"Прогон {j}");
-                for (int i = 0; i < D.Length; i++)
-                {
-                    e = firstNeuron.LearningNeuron(input1[i], input2[i], D[i]);
-                }
-            } while (e > 0 || e < 0);
+            universalNeuron.LearningNeuron(input1, input2, D);
 
-            Console.WriteLine("Решение задачи\n");
+            Console.WriteLine("Решение задачи:");
 
             for (int i = 0; i < input1.Length; i++)
             {
-                firstNeuron.SolutionOfProblem(input1[i], input2[i]);
+                universalNeuron.SolutionOfProblem(input1[i], input2[i]);
             }
         }
     }
