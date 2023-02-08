@@ -1,24 +1,23 @@
 ﻿namespace Delta_rule
 {
-    class neuron
+    class Neuron
     {
-        private int X1;
-        private int X2;
-        private const int X0 = -1;
-        private double W1 = 0;
-        private double W2 = 0;
-        private double T = 0;
-        private double E = 0;
-        private double NetRes;
-        private int Y;
-        public int N = 1;
+        private int _x1;
+        private int _x2;
+        private int _y;
+        private int _n = 1;
+        private const int _x0 = -1;
+        private double _w1 = 0;
+        private double _w2 = 0;
+        private double _t = 0;
+        private double _e = 0;
 
-        public void Net()
+        public double Net()
         {
-            NetRes = W1 * X1 + W2 * X2 + T * X0;
+            return _w1 * _x1 + _w2 * _x2 + _t * _x0;
         }
 
-        public int ActivateFunction()
+        public int ActivateFunction(double NetRes)
         {
             if (NetRes > 0)
                 return 1;
@@ -39,34 +38,33 @@
                 Console.WriteLine($"Прогон {j}");
                 for (int i = 0; i < D.Length; i++)
                 {
-                    this.X1 = X1[i];
-                    this.X2 = X2[i];
-                    Net();
-                    Y = ActivateFunction();
-                    E = D[i] - Y;
+                    _x1 = X1[i];
+                    _x2 = X2[i];
+                    _y = ActivateFunction(Net());
+                    _e = D[i] - _y;
 
-                    W1 += N * E * this.X1;
-                    W2 += N * E * this.X2;
-                    T += N * E * X0;
+                    _w1 += _n * _e * _x1;
+                    _w2 += _n * _e * _x2;
+                    _t += _n * _e * _x0;
 
-                    Console.WriteLine($"Net = {NetRes} Выход = {Y} Эталонное значение = {D[i]}");
-                    Console.WriteLine($"Изменение весов:\n W1 = {W1}\n W2 = {W2}\n T = {T}\n E = {E}\n");
+                    Console.WriteLine($"Выход = {_y} Эталонное значение = {D[i]}");
+                    Console.WriteLine($"Изменение весов:\n W1 = {_w1}\n W2 = {_w2}\n T = {_t}\n E = {_e}\n");
                 }
-            } while (E > 0 || E < 0);
+            } while (_e > 0 || _e < 0);
 
             Console.WriteLine("Обучение завершено!\n");
         }
 
         public void SolutionOfProblem (int X1, int X2)
         {
-            this.X1 = X1;
-            this.X2 = X2;
-            Net();
-            Y = ActivateFunction();
+            _x1 = X1;
+            _x2 = X2;
+            _y = ActivateFunction(Net());
 
-            Console.WriteLine($"X1 = {this.X1}\tX2 = {this.X2}\tВыход = {Y}\n");
+            Console.WriteLine($"X1 = {_x1}\tX2 = {_x2}\tВыход = {_y}\n");
         }
     }
+
     internal class Program
     {
         static void Main(string[] args)
@@ -74,7 +72,7 @@
             int[] input1 = new int[] { 1, 1, -1, -1 };
             int[] input2 = new int[] { 1, -1, 1, -1 };
             int[] D = new int[] { 1, -1, -1, -1 };
-            neuron universalNeuron = new neuron();
+            Neuron universalNeuron = new Neuron();
 
             universalNeuron.LearningNeuron(input1, input2, D);
 
